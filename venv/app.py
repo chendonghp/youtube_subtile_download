@@ -6,6 +6,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import QObject, pyqtSlot, QThread, pyqtSignal
 from YTubeSub import YTSubDownload, Video_ids
 from YoutubePlaylistDownload import Ui_MainWindow
+import images_qr
 
 
 class DownloadThread(QThread):
@@ -114,6 +115,7 @@ class MainWindowUIClass(Ui_MainWindow):
             for i in range(len(self._thread)):
                 self.debugPrint(self._thread[i].name + " 开始下载.")
                 self._thread[i].start()
+                #接受下载完成信号
                 self._thread[i].trigger.connect(self.download_completed)
         except Exception as e:
             self.debugPrint( "下载出错: "+str(e) )
@@ -131,7 +133,7 @@ def app():
     """
     app = QtWidgets.QApplication(sys.argv)
     app.setStyle('Fusion')
-    app.setWindowIcon(QtGui.QIcon('字幕.png'))
+    app.setWindowIcon(QtGui.QIcon(':/images/字幕.ico'))
     MainWindow = QtWidgets.QMainWindow()
     ui = MainWindowUIClass()
     ui.setupUi(MainWindow)

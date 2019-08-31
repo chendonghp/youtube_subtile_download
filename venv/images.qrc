@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="/" >
+    <file>images/字幕.ico</file>
+    <file>images/字幕.png</file>
+  </qresource>
+</RCC>
