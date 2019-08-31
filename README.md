@@ -1,10 +1,10 @@
 # youtube_subtile_download
-## 使用pyqt封装的字幕下载:
-安装依赖
+## Youtube字幕下载器, UI使用pyqt封装 
+安装依赖:
 
 pip install -r requirements.txt
 
-构建app:
+app构建:
 
 cd youtube_subtile_download/venv
 
