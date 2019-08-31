@@ -1,0 +1,5 @@
+('images',
+ None,
+ [],
+ 'DATA',
+ [('字幕.ico', 'images\\字幕.ico', 'DATA'), ('字幕.png', 'images\\字幕.png', 'DATA')])
