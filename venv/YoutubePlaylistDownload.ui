@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1244</width>
+    <height>859</height>
+   </rect>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>16777215</width>
+    <height>16777215</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Youtube Playlist Download</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="minimumSize">
+           <size>
+            <width>150</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>150</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>20</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>选择目录:</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="dir_text"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="browse_Button">
+          <property name="text">
+           <string>游览</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>输入playlist url:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="url_text"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="resolve_Button">
+          <property name="text">
+           <string>解析</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="download_Button">
+          <property name="text">
+           <string>下载</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>日志:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QTextBrowser" name="log">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>600</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1244</width>
+     <height>26</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>browse_Button</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>browse_slot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1194</x>
+     <y>82</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1245</x>
+     <y>43</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dir_text</sender>
+   <signal>returnPressed()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>dir_pressed_return_slot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>685</x>
+     <y>74</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>738</x>
+     <y>-9</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>url_text</sender>
+   <signal>returnPressed()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>url_return_pressed_slot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>387</x>
+     <y>170</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>390</x>
+     <y>-18</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>resolve_Button</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>resolve_playlist_slot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1084</x>
+     <y>173</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1081</x>
+     <y>-9</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>download_Button</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>download_subs_slot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1191</x>
+     <y>169</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1158</x>
+     <y>-10</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>browse_slot()</slot>
+  <slot>dir_pressed_return_slot()</slot>
+  <slot>url_return_pressed_slot()</slot>
+  <slot>resolve_playlist_slot()</slot>
+  <slot>download_subs_slot()</slot>
+ </slots>
+</ui>
