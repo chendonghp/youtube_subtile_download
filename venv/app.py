@@ -3,7 +3,7 @@ import sys
 from threading import Thread
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import QObject, pyqtSlot, QThread, pyqtSignal
+from PyQt5.QtCore import QObject, pyqtSlot, QThread, pyqtSignal,QMutex
 from YTubeSub import YTSubDownload, Video_ids
 from YoutubePlaylistDownload import Ui_MainWindow
 import images_qr
@@ -13,10 +13,12 @@ class DownloadThread(QThread):
     # python3,pyqt5与之前的版本有些不一样
     #  通过类成员对象定义信号对象
     trigger = pyqtSignal(str)
-    def __init__(self, target:object,name :str):
+    def __init__(self, target:object,name :str,debugPrint:object,mutex:object):
         super().__init__()
         self.target=target
         self.name=name
+        self.debugPrint=debugPrint
+        self.mutex=mutex
 
     def __del__(self):
         self.wait()
@@ -24,7 +26,10 @@ class DownloadThread(QThread):
     def run(self):
         # 处理你要做的业务逻辑，这里是通过一个回调来处理数据，这里的逻辑处理写自己的方法
         # 可以在这里写信号焕发
-        self.target()
+        if self.target() is not True:
+            self.mutex.lock()
+            self.debugPrint(self.target())
+            self.mutex.unlock()
         self.trigger.emit(self.name+ ": 下载完成.")
 
 
@@ -37,6 +42,7 @@ class MainWindowUIClass(Ui_MainWindow):
         '''
         super().__init__()
         self.vids=Video_ids(playlist_url="")
+        self._mutex=QMutex()
 
 
     def setupUi(self, MW):
@@ -44,7 +50,8 @@ class MainWindowUIClass(Ui_MainWindow):
         that relates to the way we want our UI to operate.
         '''
         super().setupUi(MW)
-        self.url_text.setText("https://www.youtube.com/watch?v=upinO0f20QY&list=PL5iJcUfx7xTdBPrH6DJBMnF8vZNvNslkO")
+        default_url="https://www.youtube.com/watch?v=VuFbaQDFo2s&list=PLsPuICuoEx_0Ch7pcG0c0Yv0ou5VkaFBn&index=1"
+        self.url_text.setText(default_url)
         self.dir_text.setText(".")
         # close the lower part of the splitter to hide the
         # debug window under normal operations
@@ -101,8 +108,9 @@ class MainWindowUIClass(Ui_MainWindow):
             self.vids.playlist_url = self.url_text.text()
             vids = Video_ids(self.vids.playlist_url)
             MainWindowUIClass.playlist_title, MainWindowUIClass.video_ids  =vids.get_video_ids()
-        except Exception as e:
-            self.debugPrint("解析错误: "+str(e))
+        except: #Exception as e:
+            # self.debugPrint("解析错误: "+str(e))
+            pass
         self.debugPrint( "Playlist 标题为: "+ MainWindowUIClass.playlist_title +"\n现在可以点击下载按钮下载.")
 
     def download_subs_slot(self):
@@ -111,17 +119,21 @@ class MainWindowUIClass(Ui_MainWindow):
             self._thread=[]
             for i,vid in enumerate(MainWindowUIClass.video_ids):
                 v=YTSubDownload(vid, dir=MainWindowUIClass.dir, proxies=None)
-                self._thread.append(DownloadThread(target=v.sub_download,name=v.video_title))
+                self._thread.append(DownloadThread(target=v.sub_download,name=v.video_title,
+                                                   debugPrint=self.debugPrint,mutex=self._mutex))
             for i in range(len(self._thread)):
                 self.debugPrint(self._thread[i].name + " 开始下载.")
                 self._thread[i].start()
                 #接受下载完成信号
                 self._thread[i].trigger.connect(self.download_completed)
-        except Exception as e:
-            self.debugPrint( "下载出错: "+str(e) )
+        except:# Exception as e:
+        #     self.debugPrint( "下载出错: "+str(e) )
+            pass
 
     def download_completed(self,msg):
+        self._mutex.lock()
         self.debugPrint(msg)
+        self._mutex.unlock()
 
 def app():
     """

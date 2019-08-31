@@ -46,17 +46,23 @@ class YTSubDownload(YouTubeTranscriptApi, Api ):
             if not os.path.isdir(dir):
                 os.mkdir(dir)
             file_name = os.path.join(dir, file_name)
-        subs = self.get_transcript(video_id=video_id)
-        fixed_susbs = []
-        for i, sub in enumerate(subs):
-            # abstract the subtitles form tht dict subs
-            s = ''
-            s = str(i + 1) + '\n'
-            s = s + self._sec_to_HMS(sub['start']) + ' --> ' + self._sec_to_HMS(sub['start'] + sub['duration']) + '\n'
-            s = s + sub['text'] + '\n\n'
-            fixed_susbs.append(s)
-        with open(file_name, 'w', encoding='utf-8') as f:
-            f.writelines(fixed_susbs)
+        try:
+            subs=self.get_transcript(video_id=video_id)
+        except Exception as e:
+            return str(e)
+        if subs:
+            fixed_susbs = []
+            for i, sub in enumerate(subs):
+                # abstract the subtitles form tht dict subs
+                s = ''
+                s = str(i + 1) + '\n'
+                s = s + self._sec_to_HMS(sub['start']) + ' --> ' + self._sec_to_HMS(sub['start'] + sub['duration']) + '\n'
+                s = s + sub['text'] + '\n\n'
+                fixed_susbs.append(s)
+            with open(file_name, 'w', encoding='utf-8') as f:
+                f.writelines(fixed_susbs)
+            return True
+
 
 
 class Video_ids(Api):

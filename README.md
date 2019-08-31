@@ -12,11 +12,11 @@ cd youtube_subtile_download/venv
 ```
 bundled into one executable file 
 ```shell
-pyinstaller -F -w -i 字幕.ico -n "YouTube Playlist Subtitle Downloader" app.py
+pyinstaller -F -w -i 字幕.ico -n "YouTube Playlist Subtitle Downloader" app.spec
 ```
 one-folder bundle containing an executable
 ```shell
-pyinstaller -w -i 字幕.ico -n "YouTube Playlist Subtitle Downloader" app.py
+pyinstaller -w -i 字幕.ico -n "YouTube Playlist Subtitle Downloader" app.spec
 ```
 
 ## 打包后主窗口图标不显示问题
