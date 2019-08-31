@@ -5,5 +5,7 @@
 pip install -r requirements.txt
 
 构建app:
+
 cd youtube_subtile_download/venv
+
 python app.py
