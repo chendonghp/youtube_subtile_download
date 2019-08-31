@@ -1,9 +1,31 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import QObject, pyqtSlot
-from YoutubePlaylistDownload import Ui_MainWindow
-import sys
-from YTubeSub import YTSubDownload,Video_ids
 import os
+import sys
+from threading import Thread
+
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import QObject, pyqtSlot, QThread, pyqtSignal
+from YTubeSub import YTSubDownload, Video_ids
+from YoutubePlaylistDownload import Ui_MainWindow
+
+
+class DownloadThread(QThread):
+    # python3,pyqt5与之前的版本有些不一样
+    #  通过类成员对象定义信号对象
+    trigger = pyqtSignal(str)
+    def __init__(self, target:object,name :str):
+        super().__init__()
+        self.target=target
+        self.name=name
+
+    def __del__(self):
+        self.wait()
+
+    def run(self):
+        # 处理你要做的业务逻辑，这里是通过一个回调来处理数据，这里的逻辑处理写自己的方法
+        # 可以在这里写信号焕发
+        self.target()
+        self.trigger.emit(self.name+ ": 下载完成.")
+
 
 class MainWindowUIClass(Ui_MainWindow):
     dir=""
@@ -15,12 +37,14 @@ class MainWindowUIClass(Ui_MainWindow):
         super().__init__()
         self.vids=Video_ids(playlist_url="")
 
+
     def setupUi(self, MW):
         ''' Setup the UI of the super class, and add here code
         that relates to the way we want our UI to operate.
         '''
         super().setupUi(MW)
-
+        self.url_text.setText("https://www.youtube.com/watch?v=upinO0f20QY&list=PL5iJcUfx7xTdBPrH6DJBMnF8vZNvNslkO")
+        self.dir_text.setText(".")
         # close the lower part of the splitter to hide the
         # debug window under normal operations
 
@@ -43,7 +67,8 @@ class MainWindowUIClass(Ui_MainWindow):
                                                         options=QtWidgets.QFileDialog.ShowDirsOnly
                                                         )
         MainWindowUIClass.dir=dir
-        self.debugPrint( "browse button pressed: "+dir )
+        self.dir_text.setText(dir)
+        self.debugPrint( "字幕输出目录为: "+dir )
 
     def dir_pressed_return_slot(self):
         MainWindowUIClass.dir=self.dir_text.text()
@@ -64,29 +89,37 @@ class MainWindowUIClass(Ui_MainWindow):
                 os.mkdir(MainWindowUIClass.dir)
             elif reply == QMessageBox.RejectRole:
                 self.debugPrint('你选择了取消！')
-        self.debugPrint( "return key pressed in dir input text: " +MainWindowUIClass.dir)
+        self.debugPrint( "字幕输出目录为: " +MainWindowUIClass.dir)
 
     def url_return_pressed_slot(self):
         self.vids.playlist_url=self.url_text.text()
-        self.debugPrint( "return key pressed in url input text: "+ self.vids.playlist_url)
+        self.debugPrint( "Playlist URL为: "+ self.vids.playlist_url)
 
     def resolve_playlist_slot(self):
         try:
+            self.vids.playlist_url = self.url_text.text()
             vids = Video_ids(self.vids.playlist_url)
-            print(vids.playlist_url,vids._api_key)
-            MainWindowUIClass.playlist_title, MainWindowUIClass.video_ids = vids.get_video_ids()
+            MainWindowUIClass.playlist_title, MainWindowUIClass.video_ids  =vids.get_video_ids()
         except Exception as e:
-            self.debugPrint("resolve button pressed: "+str(e))
-        self.debugPrint( "resolve button pressed: "+ MainWindowUIClass.playlist_title )
+            self.debugPrint("解析错误: "+str(e))
+        self.debugPrint( "Playlist 标题为: "+ MainWindowUIClass.playlist_title +"\n现在可以点击下载按钮下载.")
 
     def download_subs_slot(self):
         try:
             MainWindowUIClass.dir=os.path.join(MainWindowUIClass.dir,MainWindowUIClass.playlist_title)
-            [YTSubDownload(vid, dir=MainWindowUIClass.dir, proxies=None).sub_download() for vid in  MainWindowUIClass.video_ids]
+            self._thread=[]
+            for i,vid in enumerate(MainWindowUIClass.video_ids):
+                v=YTSubDownload(vid, dir=MainWindowUIClass.dir, proxies=None)
+                self._thread.append(DownloadThread(target=v.sub_download,name=v.video_title))
+            for i in range(len(self._thread)):
+                self.debugPrint(self._thread[i].name + " 开始下载.")
+                self._thread[i].start()
+                self._thread[i].trigger.connect(self.download_completed)
         except Exception as e:
-            self.debugPrint( "download button pressed: "+str(e) )
-        self.debugPrint("download button pressed: " +"Download Completed")
+            self.debugPrint( "下载出错: "+str(e) )
 
+    def download_completed(self,msg):
+        self.debugPrint(msg)
 
 def app():
     """
@@ -97,11 +130,12 @@ def app():
 
     """
     app = QtWidgets.QApplication(sys.argv)
+    app.setStyle('Fusion')
+    app.setWindowIcon(QtGui.QIcon('字幕.png'))
     MainWindow = QtWidgets.QMainWindow()
     ui = MainWindowUIClass()
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
-
 
 app()

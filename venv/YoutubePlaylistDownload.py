@@ -89,10 +89,10 @@ class Ui_MainWindow(QObject):
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Youtube Playlist Download"))
-        self.label.setText(_translate("MainWindow", "选择目录:"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "Youtube Playlist Subtitles Download"))
+        self.label.setText(_translate("MainWindow", "选择目录(默认当前目录):"))
         self.browse_Button.setText(_translate("MainWindow", "游览"))
-        self.label_2.setText(_translate("MainWindow", "输入playlist url:"))
+        self.label_2.setText(_translate("MainWindow", "粘贴 playlist url:"))
         self.resolve_Button.setText(_translate("MainWindow", "解析"))
         self.download_Button.setText(_translate("MainWindow", "下载"))
         self.label_3.setText(_translate("MainWindow", "日志:"))

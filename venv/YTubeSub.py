@@ -71,7 +71,7 @@ class Video_ids(Api):
         # resolve playlist_id
         if playlist_url is None:
             playlist_url = self.playlist_url
-        playlist_id = re.search(r'\?list=(.*)?&?', playlist_url).group(1)
+        playlist_id = re.search(r'[\?&]list=(.*)?&?', playlist_url).group(1)
         return playlist_id
 
     @property
