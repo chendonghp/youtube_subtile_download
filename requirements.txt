@@ -21,5 +21,5 @@ requests-oauthlib==1.2.0
 responses==0.10.6
 six==1.12.0
 soupsieve==1.9.3
-urllib3==1.25.3
+urllib3==1.25.8
 youtube-transcript-api==0.1.7
